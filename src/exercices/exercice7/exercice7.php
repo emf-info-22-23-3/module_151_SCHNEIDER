@@ -1,10 +1,7 @@
 <?php
 
-$username = 'root';
-$password = 'root';
-
-$bdd = new PDO('mysql:host=localhost;dbname=nomDB', $username, $password);
-$statement = $bdd->prepare('SELECT * FROM db');
+$bdd = new PDO('mysql:host=database;dbname=jeuxVideo151Ex7', 'root', 'root');
+$statement = $bdd->prepare('SELECT * FROM t_games');
 $statement->execute();
 $reponse = $statement->fetchAll();
 
