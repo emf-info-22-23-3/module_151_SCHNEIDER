@@ -1,4 +1,4 @@
- /*
+/*
  * Couche de services HTTP (worker).
  *
  * @author Olivier Neuhaus
