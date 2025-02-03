@@ -3,7 +3,7 @@
  *
  */
 
-var BASE_URL = "http://localhost/server";
+var BASE_URL = "http://127.0.0.1:8080/exercices/exercice10/serveur/";
 
 /**
  * Fonction permettant de demander la liste des pays au serveur.
@@ -15,7 +15,7 @@ function chargerPays(successCallback, errorCallback) {
     type: "GET",
     dataType: "xml",
     url: BASE_URL + "paysManager.php",
-    success: successCallback,
+    success:successCallback,
     error: errorCallback
   });
 }
@@ -30,8 +30,7 @@ function chargerSkieurs(paysId, successCallback, errorCallback) {
   $.ajax({
     type: "GET",
     dataType: "xml",
-    url: BASE_URL + "skieurManager.php",
-    data:'paysId=' + paysId,
+    url: BASE_URL + "skieurManager.php?paysId="+paysId,
     success: successCallback,
     error: errorCallback
   });

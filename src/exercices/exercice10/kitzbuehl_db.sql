@@ -5,7 +5,7 @@
 -- Client: localhost
 -- Généré le : Mer 04 Septembre 2013 à 14:08
 -- Version du serveur: 5.5.16
--- Version de PHP: 5.3.8
+-- Version de PHP: 5.3.8t_pays
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
