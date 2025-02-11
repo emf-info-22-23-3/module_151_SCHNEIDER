@@ -1,9 +1,50 @@
 body {
+    font-family: Arial, sans-serif;
     background: linear-gradient(to right, #6a11cb, #2575fc);
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0;
+}
+
+.container {
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.container-contact {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;   
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 100px;
+}
+
+.contact-options {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.contact-method {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+}
+
+.contact-method img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.contact-method p {
+    margin: 10px 0;
 }
 
 .card {
