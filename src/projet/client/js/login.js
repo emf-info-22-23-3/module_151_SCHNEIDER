@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
         
-        fetch("server/server.php", {
+        fetch("server.php", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
