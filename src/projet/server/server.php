@@ -14,30 +14,24 @@ $valid_username = "SchneiderB";
 $valid_password = "emf";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['action'])) {
-        if ($_POST['action'] == "connect") {
-            if (isset($_POST['username']) && isset($_POST['password'])) {
-                // Vérification des identifiants
-                if ($_POST['username'] === $valid_username && $_POST['password'] === $valid_password) {
-                    // Enregistrer le username dans la session
+    if (isset($receivedParams['action'])) {
+        if ($receivedParams['action'] == "login") { // Corrigé "connect" en "login"
+            if (isset($receivedParams['username']) && isset($receivedParams['password'])) {
+                if ($receivedParams['username'] === $valid_username && $receivedParams['password'] === $valid_password) {
                     $_SESSION['logged'] = $valid_username;
-                    echo '<result>true</result>';
-                    print_r($_POST);
+                    echo json_encode(["result" => true]);
                 } else {
-                    // Effacer la variable de session si les identifiants sont incorrects
                     session_unset();
-                    echo '<result>false</result>';
+                    echo json_encode(["result" => false]);
                 }
             } else {
-                echo 'test faux';
-                echo '<result>false</result>';
+                echo json_encode(["result" => false]);
             }
         }
 
-        if ($_POST['action'] == "disconnect") {
-            // Effacer la variable de session 'logged'
+        if ($receivedParams['action'] == "disconnect") {
             session_unset();
-            echo '<result>true</result>';
+            echo json_encode(["result" => true]);
         }
     }
 }

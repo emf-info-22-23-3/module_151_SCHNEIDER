@@ -12,15 +12,14 @@
  * @param {type} jqXHR
  */
 function connectSuccess(data, text, jqXHR) {
-  console.log("Donnée utilisateur :" + data)
-  if ($(data).find("result").text() == "true") {
+  console.log("Donnée utilisateur :", data);
+
+  if (data.result === true) {
     // Connexion réussie
     window.location.href = "index.html";
   } else {
     // Erreur lors de la connexion
-    $("#errorMessage")
-      .text("Nom d'utilisateur ou mot de passe incorrect")
-      .show();
+    $("#errorMessage").text("Nom d'utilisateur ou mot de passe incorrect").show();
   }
 }
 
