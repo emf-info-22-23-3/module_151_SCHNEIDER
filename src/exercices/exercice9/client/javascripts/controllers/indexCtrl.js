@@ -29,6 +29,9 @@ function chargerPersonnelSuccess(data, text, jqXHR) {
 function connectSuccess(data, text, jqXHR) {
     var cmbPersonnel = document.getElementById("cmbPersonnel");
     cmbPersonnel.options.length = 0;
+
+	console.log("Donnée utilisateur : " + data)
+
     if ($(data).find("result").text() == 'true')
 	{
 		alert("Login ok");

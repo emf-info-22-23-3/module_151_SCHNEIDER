@@ -9,19 +9,20 @@ var BASE_URL = "http://localhost:8080/projet/server/server.php";
 
 /**
  * Fonction permettant de charger les données d'équipe.
- * @param {type} teamid, id de l'équipe dans laquelle trouver les joueurs
+ * @param {type} username, nom d'utilisateur
+ * @param {type} password, mot de passe
  * @param {type} Fonction de callback lors du retour avec succès de l'appel.
  * @param {type} Fonction de callback en cas d'erreur.
  */
-function connect(pwd, successCallback, errorCallback) {
-    $.ajax({
-        type: "POST",
-        dataType: "xml",
-        url: BASE_URL,
-        data: 'action=connect&password=' + pwd,
-        success: successCallback,
-        error: errorCallback
-    });
+function connect(username, password, successCallback, errorCallback) {
+  let body ={"action": "login","username": username,"password": password};  
+  $.ajax({
+    type: "POST",
+    url: BASE_URL,
+    data: JSON.stringify(body),
+    success: successCallback,
+    error: errorCallback,
+  });
 }
 
 /**
@@ -31,12 +32,11 @@ function connect(pwd, successCallback, errorCallback) {
  * @param {type} Fonction de callback en cas d'erreur.
  */
 function disconnect(successCallback, errorCallback) {
-    $.ajax({
-        type: "POST",
-        dataType: "xml",
-        url: BASE_URL,
-        data: 'action=disconnect',
-        success: successCallback,
-        error: errorCallback
-    });
+  $.ajax({
+    type: "POST",
+    url: BASE_URL,
+    data: JSON.stringify(body),
+    success: successCallback,
+    error: errorCallback,
+  });
 }

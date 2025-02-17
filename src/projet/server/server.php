@@ -1,5 +1,13 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, PUT");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
+
 session_start();
+
+$json = file_get_contents(filename: 'php://input');
+$receivedParams = json_decode($json, true);
 
 // Identifiants de base
 $valid_username = "SchneiderB";
@@ -14,12 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // Enregistrer le username dans la session
                     $_SESSION['logged'] = $valid_username;
                     echo '<result>true</result>';
+                    print_r($_POST);
                 } else {
                     // Effacer la variable de session si les identifiants sont incorrects
                     session_unset();
                     echo '<result>false</result>';
                 }
             } else {
+                echo 'test faux';
                 echo '<result>false</result>';
             }
         }
