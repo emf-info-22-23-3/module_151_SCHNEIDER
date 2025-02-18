@@ -12,8 +12,6 @@
  * @param {type} jqXHR
  */
 function connectSuccess(data, text, jqXHR) {
-  console.log("Donnée utilisateur :", data);
-
   if (data.result === true) {
     // Connexion réussie
     window.location.href = "index.html";
@@ -41,10 +39,8 @@ $(document).ready(function () {
 
   // Lorsque l'utilisateur clique sur le bouton de connexion
   butConnect.click(function (event) {
-    // Empêche l'envoi du formulaire par défaut
     event.preventDefault();
 
-    // Appel de la fonction connect avec nom d'utilisateur et mot de passe
     connect(
       document.getElementById("username").value,
       document.getElementById("password").value,
@@ -53,4 +49,4 @@ $(document).ready(function () {
     );
   });
 });
- 
+
