@@ -19,6 +19,7 @@ function connect(username, password, successCallback, errorCallback) {
   $.ajax({
     type: "POST",
     url: BASE_URL,
+    dataType: "json",
     data: JSON.stringify(body),
     success: successCallback,
     error: errorCallback,
@@ -35,6 +36,7 @@ function disconnect(successCallback, errorCallback) {
   $.ajax({
     type: "POST",
     url: BASE_URL,
+    dataType: "json",
     data: JSON.stringify(body),
     success: successCallback,
     error: errorCallback,
