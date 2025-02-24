@@ -35,19 +35,23 @@
   </nav>
 
   <div class="container-contact container mt-5">
-    <h1 class="text-center">Table <?php echo $currentTable; ?>/10</h1>
+    <h1 class="text-center">Table 1/10</h1>
     <div class="row justify-content-center">
       <div class="col-md-6 text-center">
         <img src="img/billard.png" class="img-fluid" alt="Table de billard">
       </div>
       <div class="col-md-6 text-center">
-        <p><?php echo count($reservedPlayers); ?>/4 joueurs</p>
         <form method="POST">
-          <input type="text" name="player1" class="form-control mb-2" placeholder="Nom joueur 1">
-          <input type="text" name="player2" class="form-control mb-2" placeholder="Nom joueur 2">
-          <input type="text" name="player3" class="form-control mb-2" placeholder="Nom joueur 3">
-          <input type="text" name="player4" class="form-control mb-2" placeholder="Nom joueur 4">
-          <button type="submit" name="reserve" class="btn btn-primary">Réserver</button>
+          <input type="text" name="player1" class="form-control mb-2" disabled="yes" placeholder="Nom joueur 1">
+          <input type="text" name="player2" class="form-control mb-2" disabled="yes" placeholder="Nom joueur 2">
+          <input type="text" name="player3" class="form-control mb-2" disabled="yes" placeholder="Nom joueur 3">
+          <input type="text" name="player4" class="form-control mb-2" disabled="yes" placeholder="Nom joueur 4">
+          <form id="reservationForm" action="../server/server.php">
+            <input type="hidden" name="action" value="reserve">
+            <input type="hidden" name="tableNumber" id="tableNumberInput">
+            <button type="submit" id="reserveButton">Réserver</button>
+        </form>
+        
         </form>
       </div>
     </div>
@@ -60,6 +64,12 @@
       </form>
     </div>
   </div>
+
+  <script src="js/jquery-1.10.2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="javascripts/httpService.js"></script>
+  <script src="javascripts/indexCtrl.js"></script>
+
 </body>
 
 </html>

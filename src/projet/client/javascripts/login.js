@@ -7,27 +7,28 @@
 
 /**
  * Méthode appelée lors du retour avec succès du résultat de la connexion
- * @param {type} data
- * @param {type} text
- * @param {type} jqXHR
+ * @param {type} data - Les données retournées par le serveur.
+ * @param {type} text - Le texte de réponse du serveur.
+ * @param {type} jqXHR - L'objet XMLHttpRequest pour le détail de la requête.
  */
 function connectSuccess(data, text, jqXHR) {
   if (data.result === true) {
-    // Connexion réussie
-    window.location.href = "index.html";
+    // Connexion réussie : redirige vers la page principale avec un numéro de table par défaut
+    window.location.href = `index.html?tableNumber=1`;
   } else {
-    // Erreur lors de la connexion
+    // Erreur lors de la connexion : affiche un message d'erreur
     $("#errorMessage").text("Nom d'utilisateur ou mot de passe incorrect").show();
   }
 }
 
 /**
  * Méthode appelée en cas d'erreur lors de la lecture du webservice
- * @param {type} request
- * @param {type} status
- * @param {type} error
+ * @param {type} request - L'objet de la requête.
+ * @param {type} status - Le statut de la réponse.
+ * @param {type} error - Le message d'erreur retourné.
  */
 function CallbackError(request, status, error) {
+  // Affiche une alerte avec les détails de l'erreur
   alert("Erreur : " + error + ", request: " + request + ", status: " + status);
 }
 
@@ -35,18 +36,18 @@ function CallbackError(request, status, error) {
  * Méthode "start" appelée après le chargement complet de la page
  */
 $(document).ready(function () {
-  var butConnect = $("#connect");
+  var butConnect = $("#connect");  // Sélectionne le bouton de connexion
 
   // Lorsque l'utilisateur clique sur le bouton de connexion
   butConnect.click(function (event) {
-    event.preventDefault();
+    event.preventDefault();  // Empêche l'action par défaut du bouton
 
+    // Appelle la fonction connect() avec les valeurs des champs utilisateur et mot de passe
     connect(
-      document.getElementById("username").value,
-      document.getElementById("password").value,
-      connectSuccess,
-      CallbackError
+      document.getElementById("username").value,  // Récupère la valeur du champ "username"
+      document.getElementById("password").value,  // Récupère la valeur du champ "password"
+      connectSuccess,  // Fonction de callback en cas de succès
+      CallbackError    // Fonction de callback en cas d'erreur
     );
   });
 });
-
