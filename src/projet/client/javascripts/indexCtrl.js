@@ -75,6 +75,15 @@ $(document).ready(function () {
   var prevButton = $("#prevButton");
   var nextButton = $("#prevButton");
   var reserveButton = $("#reserveButton");
+  var connecxtButton = $("#connectOrDisconnect")
+
+  var loggued = getLoggued();
+
+  if(loggued === true) {
+    connectButton.text("Se déconnecter");
+  } else {
+    connectButton.text("Se connecter")
+  }
 
   reserveButton.click(function (event) {
     event.preventDefault();

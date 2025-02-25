@@ -6,6 +6,7 @@
  */
 
 var BASE_URL = "http://localhost:8080/projet/server/server.php";
+var loggued;
 
 /**
  * Fonction permettant de vérifier si l'utilisateur est connecté.
@@ -41,6 +42,12 @@ function connect(username, password, successCallback, errorCallback) {
     dataType: "json",
     data: JSON.stringify(body),
     success: successCallback,
+    /**
+     * function (response) {
+        sessionStorage.setItem("loggued", true);
+        loggued = true;
+    }
+     */
     error: errorCallback,
   });
 }
@@ -58,6 +65,13 @@ function disconnect(successCallback, errorCallback) {
     dataType: "json",
     data: JSON.stringify({ action: "disconnect" }),
     success: successCallback,
+/**
+ * function (response) {
+      if(response.status === "success") {
+        sessionStorage.removeItem("loggued")
+      }
+    },
+ */
     error: errorCallback,
   });
 }
@@ -79,4 +93,14 @@ function reserverTable(tableNumber, successCallback, errorCallback) {
     success: successCallback,
     error: errorCallback,
   });
+}
+
+/**
+ * Fonction pour 
+ * @param {} loggued 
+ * @returns 
+ */
+
+function getLoggued(loggued) {
+  return loggued;
 }
