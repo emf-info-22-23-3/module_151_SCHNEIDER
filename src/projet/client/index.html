@@ -46,21 +46,17 @@
           <input type="text" name="player2" class="form-control mb-2" disabled="yes" placeholder="Nom joueur 2">
           <input type="text" name="player3" class="form-control mb-2" disabled="yes" placeholder="Nom joueur 3">
           <input type="text" name="player4" class="form-control mb-2" disabled="yes" placeholder="Nom joueur 4">
-          <form id="reservationForm" action="../server/server.php">
-            <input type="hidden" name="action" value="reserve">
-            <input type="hidden" name="tableNumber" id="tableNumberInput">
-            <button type="submit" id="reserveButton">Réserver</button>
-        </form>
+          <button type="submit" name="reserve" class="btn btn-primary" id="reserveButton">Réserver</button>
         
         </form>
       </div>
     </div>
     <div class="text-center mt-3">
       <form method="POST" class="d-inline">
-        <button type="submit" name="prev" class="btn btn-secondary">&#9665;</button>
+        <button type="submit" name="prev" class="btn btn-secondary" id="prevButton">&#9665;</button>
       </form>
       <form method="POST" class="d-inline">
-        <button type="submit" name="next" class="btn btn-secondary">&#9655;</button>
+        <button type="submit" name="next" class="btn btn-secondary" id="nextButton">&#9655;</button>
       </form>
     </div>
   </div>

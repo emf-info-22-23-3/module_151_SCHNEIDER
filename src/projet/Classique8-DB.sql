@@ -4,29 +4,29 @@ USE Classique8;
 -- Création des tables
 CREATE TABLE IF NOT EXISTS T_Localite (
     PK_Localite INT PRIMARY KEY AUTO_INCREMENT,
-    Localite VARCHAR(50),
-    NPA INT
+    Localite VARCHAR(50) NOT NULL,
+    NPA INT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS T_Client (
     PK_Client INT PRIMARY KEY AUTO_INCREMENT,
-    Nom VARCHAR(50),
-    Prenom VARCHAR(50),
-    NomUtilisateur VARCHAR(51),
-    email VARCHAR(255),
-    password VARCHAR(100),
-    FK_localite INT,
+    Nom VARCHAR(50) NOT NULL,
+    Prenom VARCHAR(50) NOT NULL,
+    NomUtilisateur VARCHAR(51) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    FK_localite INT NOT NULL,
     FOREIGN KEY (FK_localite) REFERENCES T_Localite(PK_Localite)
 );
 
 CREATE TABLE IF NOT EXISTS T_Table (
     PK_Table INT PRIMARY KEY AUTO_INCREMENT,
-    Numero INT
+    Numero INT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS TR_Client_Table (
-    FK_Client INT,
-    FK_Table INT,
+    FK_Client INT NOT NULL,
+    FK_Table INT NOT NULL,
     FOREIGN KEY (FK_Client) REFERENCES T_Client(PK_Client),
     FOREIGN KEY (FK_Table) REFERENCES T_Table(PK_Table)
 );

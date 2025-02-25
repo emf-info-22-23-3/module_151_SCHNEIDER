@@ -19,9 +19,9 @@ function updateTableNumber() {
  */
 function prevButtonClick() {
   if (tableNumber > 1) {
-    tableNumber--;  // Décrémentation du numéro de la table
-    updateTableNumber();  // Mise à jour du titre
-    window.location.href = `index.html?tableNumber=${tableNumber}`;  // Mise à jour de l'URL avec le nouveau numéro de table
+    tableNumber--; // Décrémentation du numéro de la table
+    updateTableNumber(); // Mise à jour du titre
+    window.location.href = `index.html?tableNumber=${tableNumber}`; // Mise à jour de l'URL avec le nouveau numéro de table
   }
 }
 
@@ -31,33 +31,56 @@ function prevButtonClick() {
  */
 function nextButtonClick() {
   if (tableNumber < maxTables) {
-    tableNumber++;  // Incrémentation du numéro de la table
-    updateTableNumber();  // Mise à jour du titre
-    window.location.href = `index.html?tableNumber=${tableNumber}`;  // Mise à jour de l'URL avec le nouveau numéro de table
+    tableNumber++; // Incrémentation du numéro de la table
+    updateTableNumber(); // Mise à jour du titre
+    window.location.href = `index.html?tableNumber=${tableNumber}`; // Mise à jour de l'URL avec le nouveau numéro de table
   }
 }
 
 /**
- * Gère l'événement de clic sur le bouton de réservation.
- * Redirige vers le script de réservation avec le numéro de table via GET.
+ * Méthode appelée lors du retour avec succès du résultat de la réservatiob
+ * @param {type} data - Les données retournées par le serveur.
+ * @param {type} text - Le texte de réponse du serveur.
+ * @param {type} jqXHR - L'objet XMLHttpRequest pour le détail de la requête.
  */
-function reserveButtonClick() {
-  // Redirection vers server.php en envoyant le numéro de la table via GET pour réserver
-  window.location.href = `server.php?tableNumber=${tableNumber}&action=reserve`;
+function reserveSuccess(data, text, jqXHR) {
+  if (data.result === true) {
+    // Réservation réussie
+    window.location.href = `index.html?tableNumber=1`;
+  } else {
+    // Erreur lors de la réservation : affiche un message d'erreur
+    $("#errorMessage").text("Erreur lors de la réservation de la table").show();
+  }
+}
+
+/**
+ * Méthode appelée en cas d'erreur lors de la lecture du webservice
+ * @param {type} request - L'objet de la requête.
+ * @param {type} status - Le statut de la réponse.
+ * @param {type} error - Le message d'erreur retourné.
+ */
+function CallbackError(request, status, error) {
+  // Affiche une alerte avec les détails de l'erreur
+  alert("Erreur : " + error + ", request: " + request + ", status: " + status);
 }
 
 /**
  * Méthode "start" appelée après le chargement complet de la page
  */
 $(document).ready(function () {
-  let urlParams = new URLSearchParams(window.location.search);
-  let tableNumber = parseInt(urlParams.get('tableNumber')) || 1;  // Valeur par défaut à 1 si non spécifiée
-  const maxTables = 10;  // Définition du nombre maximum de tables
+  const params = new URLSearchParams(window.location.search);
+  const tableNumber = params.get("tableNumber");
 
   // Sélectionne les éléments DOM pour les boutons
-  const prevButton = $("button[name='prev']");
-  const nextButton = $("button[name='next']");
-  const reserveButton = $("button[name='reserve']");
+  var prevButton = $("#prevButton");
+  var nextButton = $("#prevButton");
+  var reserveButton = $("#reserveButton");
+
+  reserveButton.click(function (event) {
+    event.preventDefault();
+
+    reserverTable(tableNumber, reserveSuccess, CallbackError);
+  });
 
   // Initialisation du titre en fonction du numéro de la table actuel
   updateTableNumber();
@@ -73,8 +96,5 @@ $(document).ready(function () {
     nextButtonClick();
   });
 
-  reserveButton.on("click", function (event) {
-    event.preventDefault();
-    reserveButtonClick();
-  });
+  
 });

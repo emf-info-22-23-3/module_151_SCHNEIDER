@@ -17,7 +17,9 @@ function connectSuccess(data, text, jqXHR) {
     window.location.href = `index.html?tableNumber=1`;
   } else {
     // Erreur lors de la connexion : affiche un message d'erreur
-    $("#errorMessage").text("Nom d'utilisateur ou mot de passe incorrect").show();
+    $("#errorMessage")
+      .text("Nom d'utilisateur ou mot de passe incorrect")
+      .show();
   }
 }
 
@@ -36,18 +38,18 @@ function CallbackError(request, status, error) {
  * Méthode "start" appelée après le chargement complet de la page
  */
 $(document).ready(function () {
-  var butConnect = $("#connect");  // Sélectionne le bouton de connexion
+  var butConnect = $("#connect"); // Sélectionne le bouton de connexion
 
   // Lorsque l'utilisateur clique sur le bouton de connexion
   butConnect.click(function (event) {
-    event.preventDefault();  // Empêche l'action par défaut du bouton
+    event.preventDefault(); // Empêche l'action par défaut du bouton
 
     // Appelle la fonction connect() avec les valeurs des champs utilisateur et mot de passe
     connect(
-      document.getElementById("username").value,  // Récupère la valeur du champ "username"
-      document.getElementById("password").value,  // Récupère la valeur du champ "password"
-      connectSuccess,  // Fonction de callback en cas de succès
-      CallbackError    // Fonction de callback en cas d'erreur
+      document.getElementById("username").value, // Récupère la valeur du champ "username"
+      document.getElementById("password").value, // Récupère la valeur du champ "password"
+      connectSuccess, // Fonction de callback en cas de succès
+      CallbackError // Fonction de callback en cas d'erreur
     );
   });
 });
