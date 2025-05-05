@@ -14,6 +14,7 @@ var currentTable = getCurrentTable();
 function updateTableNumber() {
   const tableTitle = $("h1");
   tableTitle.text(`Table ${currentTable}/${maxTable}`);
+  loadReservation(currentTable);
 }
 
 /**
@@ -125,6 +126,24 @@ function checkSessionSuccess(data, text, jqXHR) {
   }
   successCallback(data);
 }
+
+function updatePlayerFields(players) {
+  $("#player1").val(players[0] || "");
+  $("#player2").val(players[1] || "");
+  $("#player3").val(players[2] || "");
+  $("#player4").val(players[3] || "");
+}
+
+function loadReservation(tableNumber) {
+  getReservation(tableNumber, function (response) {
+    if (response.result === true && Array.isArray(response.players)) {
+      updatePlayerFields(response.players);
+    } else {
+      updatePlayerFields([]);
+    }
+  }, callbackError);
+}
+
 
 /**
  * Méthode "start" appelée après le chargement complet de la page.

@@ -57,6 +57,33 @@ function reserveTable($currentTable, $username) {
     }
 }
 
+function getReservation($currentTable) {
+    $db = Connexion::getInstance();
+    $query = "SELECT NomUtilisateur FROM t_client 
+	          INNER JOIN tr_client_table ON fk_client = pk_client 
+              INNER JOIN t_table ON fk_table = pk_table
+              WHERE NUMERO = :table;";
+    $params = [":table" => $currentTable];
+    $rows = $db->selectQuery($query, $params);
+    
+    if ($rows) {
+        $players = array_map(function($row) {
+            return $row['NomUtilisateur'];
+        }, $rows);
+
+        return [
+            "result" => true,
+            "players" => $players
+        ];
+    } else {
+        return [
+            "result" => true,
+            "players" => []
+        ];
+    }
+}
+
+
 // Fonction pour vérifier la session de l'utilisateur
 function checkSession() {
     if (isset($_SESSION['loggued']) && $_SESSION['status'] == 'loggued') {

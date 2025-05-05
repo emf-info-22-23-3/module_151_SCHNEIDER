@@ -84,6 +84,25 @@ function reserverTable(currentTable, successCallback, errorCallback) {
 }
 
 /**
+ * Fonction pour récupérer les réservations d'une table.
+ * @param {number} currentTable - Numéro de la table à consulter.
+ * @param {function} successCallback - Fonction de callback en cas de succès.
+ * @param {function} errorCallback - Fonction de callback en cas d'erreur.
+ */
+function getReservation(currentTable, successCallback, errorCallback) {
+  let body = {action: "get_reservation","currentTable": currentTable};
+
+  $.ajax({
+    type: "POST",
+    url: BASE_URL,
+    dataType: "json",
+    data: JSON.stringify(body),
+    success: successCallback,
+    error: errorCallback
+  });
+}
+
+/**
  * Fonction pour obtenir l'état de connexion.
  * @returns {boolean} - True si l'utilisateur est connecté, false sinon.
  */

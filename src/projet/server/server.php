@@ -65,6 +65,24 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
                 }
             }
 
+            if ($receivedParams["action"] == "get_reservation") {
+                if (isset($receivedParams['currentTable'])) {
+                    $currentTable = $receivedParams['currentTable'];
+                    $response = getReservation($currentTable);
+            
+                    if ($response['result'] === true) {
+                        http_response_code(200);
+                    } else {
+                        http_response_code(400);
+                    }
+            
+                    echo json_encode($response);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(["result" => false, "error" => "Paramètres manquants"]);
+                }
+            }
+
             // Action pour vérifier si l'utilisateur est déjà connecté
             if ($receivedParams['action'] == "check_session") {
                 $response = checkSession();
