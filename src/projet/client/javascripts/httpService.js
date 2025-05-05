@@ -25,21 +25,8 @@ function checkSession(successCallback, errorCallback) {
     url: BASE_URL,
     dataType: "json",
     data: JSON.stringify(body),
-    success: function(response) {
-      if (response.result === true) {
-        loggued = true;
-        sessionStorage.setItem("loggued", true);
-      } else {
-        loggued = false;
-        sessionStorage.removeItem("loggued");
-      }
-      successCallback(response);
-    },
-    error: function(error) {
-      loggued = false;
-      sessionStorage.removeItem("loggued");
-      errorCallback(error);
-    },
+    success: successCallback,
+    error: errorCallback,
   });
 }
 
@@ -57,13 +44,7 @@ function connect(username, password, successCallback, errorCallback) {
     url: BASE_URL,
     dataType: "json",
     data: JSON.stringify(body),
-    success: function(response) {
-      if (response.result === true) {
-        sessionStorage.setItem("loggued", true);
-        loggued = true;
-      }
-      successCallback(response);
-    },
+    success: successCallback,
     error: errorCallback,
   });
 }
@@ -79,13 +60,7 @@ function disconnect(successCallback, errorCallback) {
     url: BASE_URL,
     dataType: "json",
     data: JSON.stringify({ action: "disconnect" }),
-    success: function(response) {
-      if (response.result === true) {
-        sessionStorage.removeItem("loggued");
-        loggued = false;
-      }
-      successCallback(response);
-    },
+    success: successCallback,
     error: errorCallback,
   });
 }

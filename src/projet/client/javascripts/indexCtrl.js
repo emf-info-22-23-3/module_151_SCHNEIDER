@@ -38,10 +38,10 @@ function nextButtonClick() {
 }
 
 /**
- * Méthode appelée lors du retour avec succès du résultat de la réservatiob
- * @param {type} data - Les données retournées par le serveur.
- * @param {type} text - Le texte de réponse du serveur.
- * @param {type} jqXHR - L'objet XMLHttpRequest pour le détail de la requête.
+ * Méthode appelée lors du retour avec succès du résultat de la réservation.
+ * @param {Object} data - Les données retournées par le serveur.
+ * @param {string} text - Le texte de réponse du serveur.
+ * @param {Object} jqXHR - L'objet XMLHttpRequest pour le détail de la requête.
  */
 function reserveSuccess(data, text, jqXHR) {
   if (data.result === true) {
@@ -54,18 +54,58 @@ function reserveSuccess(data, text, jqXHR) {
 }
 
 /**
- * Méthode appelée en cas d'erreur lors de la lecture du webservice
- * @param {type} request - L'objet de la requête.
- * @param {type} status - Le statut de la réponse.
- * @param {type} error - Le message d'erreur retourné.
+ * Méthode appelée en cas d'erreur lors de la lecture du webservice.
+ * @param {Object} request - L'objet de la requête.
+ * @param {string} status - Le statut de la réponse.
+ * @param {string} error - Le message d'erreur retourné.
  */
-function CallbackError(request, status, error) {
+function callbackError(request, status, error) {
   // Affiche une alerte avec les détails de l'erreur
   alert("Erreur : " + error + ", request: " + request + ", status: " + status);
 }
 
 /**
- * Méthode "start" appelée après le chargement complet de la page
+ * Gère le succès de la déconnexion et redirige l'utilisateur vers la page de login.
+ * @param {Object} data - Les données retournées par le serveur.
+ * @param {string} text - Le texte de réponse du serveur.
+ * @param {Object} jqXHR - L'objet XMLHttpRequest pour le détail de la requête.
+ */
+function disconnectSuccess(data, text, jqXHR) {
+  if (data.result === true) {
+    // Déconnexion réussie : nettoie la session
+    sessionStorage.removeItem("loggued");
+    loggued = false;
+    window.location.href = 'login.html'; // Redirige vers la page de connexion
+  } else {
+    // Erreur lors de la déconnexion : affiche un message d'erreur 
+    $("#errorMessage")
+      .text("Erreur lors de la déconnexion")
+      .show();
+  }
+}
+
+/**
+ * Gère le succès de la vérification de session.
+ * @param {Object} data - Les données retournées par le serveur.
+ * @param {string} text - Le texte de réponse du serveur.
+ * @param {Object} jqXHR - L'objet XMLHttpRequest pour le détail de la requête.
+ */
+function checkSessionSuccess(data, text, jqXHR) {
+  if (data.result === true) {
+    // Session valide : l'utilisateur est connecté
+    loggued = true;
+    sessionStorage.setItem("loggued", true);
+  } else {
+    // Session invalide : l'utilisateur est déconnecté
+    loggued = false;
+    sessionStorage.removeItem("loggued");
+  }
+  // Appel du callback de succès avec la réponse
+  successCallback(data);
+}
+
+/**
+ * Méthode "start" appelée après le chargement complet de la page.
  */
 $(document).ready(function () {
   const params = new URLSearchParams(window.location.search);
@@ -73,22 +113,37 @@ $(document).ready(function () {
 
   // Sélectionne les éléments DOM pour les boutons
   var prevButton = $("#prevButton");
-  var nextButton = $("#prevButton");
+  var nextButton = $("#nextButton");
   var reserveButton = $("#reserveButton");
-  var connectButton = $("#connectOrDisconnect")
+  var connectButton = $("#connectOrDisconnect");
 
   var loggued = getLoggued();
 
-  if(loggued === true) {
+  // Mise à jour du texte du bouton en fonction de l'état de connexion
+  if (loggued === true) {
     connectButton.text("Se déconnecter");
   } else {
-    connectButton.text("Se connecter")
+    connectButton.text("Se connecter");
   }
+
+  // L'événement de déconnexion
+  connectButton.on("click", function (event) {
+    event.preventDefault();
+
+    if (getLoggued() === true) {
+      // Appelle disconnect avec le callback disconnectSuccess
+      disconnect(disconnectSuccess, callbackError);
+    } else {
+      // Si l'utilisateur n'est pas connecté, redirige vers la page de login
+      console.error("Erreur lors de la déconnexion : utilisateur non connecté");
+      window.location.href = 'login.html';
+    }
+  });
 
   reserveButton.click(function (event) {
     event.preventDefault();
 
-    reserverTable(tableNumber, reserveSuccess, CallbackError);
+    reserverTable(tableNumber, reserveSuccess, callbackError);
   });
 
   // Initialisation du titre en fonction du numéro de la table actuel
@@ -104,6 +159,4 @@ $(document).ready(function () {
     event.preventDefault();
     nextButtonClick();
   });
-
-  
 });

@@ -13,7 +13,9 @@
  */
 function connectSuccess(data, text, jqXHR) {
   if (data.result === true) {
-    // Connexion réussie : redirige vers la page principale avec un numéro de table par défaut
+    // Connexion réussie : enregistre l'état de la session et redirige vers la page principale
+    sessionStorage.setItem("loggued", true);
+    loggued = true;
     window.location.href = `index.html?tableNumber=1`;
   } else {
     // Erreur lors de la connexion : affiche un message d'erreur
@@ -29,7 +31,7 @@ function connectSuccess(data, text, jqXHR) {
  * @param {type} status - Le statut de la réponse.
  * @param {type} error - Le message d'erreur retourné.
  */
-function CallbackError(request, status, error) {
+function callbackError(request, status, error) {
   // Affiche une alerte avec les détails de l'erreur
   alert("Erreur : " + error + ", request: " + request + ", status: " + status);
 }
@@ -49,7 +51,7 @@ $(document).ready(function () {
       document.getElementById("username").value, // Récupère la valeur du champ "username"
       document.getElementById("password").value, // Récupère la valeur du champ "password"
       connectSuccess, // Fonction de callback en cas de succès
-      CallbackError // Fonction de callback en cas d'erreur
+      callbackError // Fonction de callback en cas d'erreur
     );
   });
 });
