@@ -16,7 +16,7 @@ function connectSuccess(data, text, jqXHR) {
     // Connexion réussie : enregistre l'état de la session et redirige vers la page principale
     sessionStorage.setItem("loggued", true);
     loggued = true;
-    window.location.href = `index.html?tableNumber=1`;
+    window.location.href = `index.html`;
   } else {
     // Erreur lors de la connexion : affiche un message d'erreur
     $("#errorMessage")

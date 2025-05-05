@@ -21,22 +21,37 @@ function connectUser($username, $password) {
 }
 
 // Fonction pour réserver une table
-function reserveTable($tableNumber, $username) {
+function reserveTable($currentTable, $username) {
     $db = Connexion::getInstance();
-    $query = "SELECT COUNT(*) as total FROM TR_Client_Table WHERE FK_Table = :tableNumber";
-    $params = [":tableNumber" => $tableNumber];
+
+    //Vérifier si la table est pleine
+    $query = "SELECT COUNT(*) as total FROM TR_Client_Table WHERE FK_Table = :currentTable";
+    $params = [":currentTable" => $currentTable];
     $result = $db->selectSingleQuery($query, $params);
 
     if ($result && $result['total'] < 4) {
+        //Récupérer l'ID du client à partir du nom d'utilisateur
+        $clientQuery = "SELECT PK_Client FROM T_Client WHERE NomUtilisateur = :username";
+        $clientParams = [":username" => $username];
+        $client = $db->selectSingleQuery($clientQuery, $clientParams);
+
+        if (!$client) {
+            return ["result" => false, "error" => "Client introuvable"];
+        }
+
+        $clientId = $client['PK_Client'];
+
+        //Faire l'INSERT avec l'ID client
         $insertQuery = "INSERT INTO TR_Client_Table (FK_Client, FK_Table) 
-                        VALUES ((SELECT PK_Table FROM T_Table WHERE Numero = :tableNumber), :username)";
-        $insertParams = [":tableNumber" => $tableNumber, ":username" => $username];
+                        VALUES (:clientId, (SELECT PK_Table FROM T_Table WHERE Numero = :currentTable))";
+        $insertParams = [":clientId" => $clientId, ":currentTable" => $currentTable];
 
         if ($db->executeQuery($insertQuery, $insertParams)) {
             return ["result" => true, "message" => "Table réservée"];
         } else {
             return ["result" => false, "error" => "Erreur lors de la réservation"];
         }
+
     } else {
         return ["result" => false, "error" => "Table complète"];
     }
@@ -56,4 +71,5 @@ function disconnectUser() {
     session_unset();
     return ["result" => true];
 }
+
 ?>

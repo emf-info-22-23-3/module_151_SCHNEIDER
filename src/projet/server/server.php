@@ -41,13 +41,20 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
 
             // Action pour réserver une table
             if ($receivedParams["action"] == "reserve") {
-                if (isset($receivedParams['tableNumber'])) {
-                    $tableNumber = $receivedParams['tableNumber'];
+                if (isset($receivedParams['currentTable'])) {
+                    $currentTable = $receivedParams['currentTable'];
                     if (isset($_SESSION['loggued'])) {
                         $username = $_SESSION['loggued'];
-                        $response = reserveTable($tableNumber, $username);
+                        $response = reserveTable($currentTable, $username);
+
+                        if ($response['result'] === true) {
+                            http_response_code(200);
+                        } else {
+                            http_response_code(400);
+                        }
+
                         echo json_encode($response);
-                        http_response_code($response['result'] === true ? 200 : 400);
+
                     } else {
                         http_response_code(401);
                         echo json_encode(["result" => false, "error" => "Utilisateur non connecté"]);
@@ -61,7 +68,12 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
             // Action pour vérifier si l'utilisateur est déjà connecté
             if ($receivedParams['action'] == "check_session") {
                 $response = checkSession();
-                http_response_code($response['result'] === true ? 200 : 401);
+                if($response['result'] === true){
+                    http_response_code(200);
+                } else {
+                    http_response_code(400);
+                }
+                
                 echo json_encode($response);
             }
 

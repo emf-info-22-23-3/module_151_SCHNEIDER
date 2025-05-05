@@ -67,12 +67,12 @@ function disconnect(successCallback, errorCallback) {
 
 /**
  * Fonction pour réserver une table.
- * @param {number} tableNumber - Numéro de la table à réserver.
+ * @param {number} currentTable - Numéro de la table à réserver.
  * @param {function} successCallback - Fonction de callback en cas de succès.
  * @param {function} errorCallback - Fonction de callback en cas d'erreur.
  */
-function reserverTable(tableNumber, successCallback, errorCallback) {
-  let body = { "action": "reserve", "tableNumber": tableNumber };
+function reserverTable(currentTable, successCallback, errorCallback) {
+  let body = { "action": "reserve", "currentTable": currentTable };
   $.ajax({
     type: "POST",
     url: BASE_URL,

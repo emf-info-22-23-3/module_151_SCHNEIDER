@@ -5,36 +5,66 @@
  * @version 1.0 / 24-FEB-2025
  */
 
+const maxTable = 10;
+var currentTable = getCurrentTable();
+
 /**
  * Met à jour le texte affiché pour le numéro de la table actuelle.
  */
 function updateTableNumber() {
   const tableTitle = $("h1");
-  tableTitle.text(`Table ${tableNumber}/${maxTables}`);
+  tableTitle.text(`Table ${currentTable}/${maxTable}`);
 }
 
 /**
  * Gère l'événement de clic sur le bouton "précédent".
- * Décrémente le numéro de la table si possible et met à jour l'URL.
+ * Décrémente le numéro de la table si possible et met à jour le titre.
  */
 function prevButtonClick() {
-  if (tableNumber > 1) {
-    tableNumber--; // Décrémentation du numéro de la table
+  if (currentTable > 1) {
+    currentTable--; // Décrémentation du numéro de la table
+    setCurrentTable(currentTable); // Mise à jour dans sessionStorage
     updateTableNumber(); // Mise à jour du titre
-    window.location.href = `index.html?tableNumber=${tableNumber}`; // Mise à jour de l'URL avec le nouveau numéro de table
   }
 }
 
 /**
  * Gère l'événement de clic sur le bouton "suivant".
- * Incrémente le numéro de la table si possible et met à jour l'URL.
+ * Incrémente le numéro de la table si possible et met à jour le titre.
  */
 function nextButtonClick() {
-  if (tableNumber < maxTables) {
-    tableNumber++; // Incrémentation du numéro de la table
+  if (currentTable < maxTable) {
+    currentTable++; // Incrémentation du numéro de la table
+    setCurrentTable(currentTable); // Mise à jour dans sessionStorage
     updateTableNumber(); // Mise à jour du titre
-    window.location.href = `index.html?tableNumber=${tableNumber}`; // Mise à jour de l'URL avec le nouveau numéro de table
   }
+}
+
+/**
+ * Enregistre le numéro de la table dans sessionStorage.
+ * Cette méthode est appelée chaque fois que currentTable est mis à jour.
+ *
+ * @param {number} tableNumber - Le numéro de la table à enregistrer.
+ */
+function setCurrentTable(tableNumber) {
+  sessionStorage.setItem("currentTable", tableNumber);
+}
+
+/**
+ * Récupère le numéro de la table depuis sessionStorage.
+ * Si aucune valeur n'est stockée ou si la valeur est invalide, retourne la table 1.
+ *
+ * @returns {number} Le numéro de la table actuelle.
+ */
+function getCurrentTable() {
+  const storedTable = sessionStorage.getItem("currentTable");
+  if (storedTable) {
+    const tableNumber = parseInt(storedTable);
+    if (tableNumber >= 1 && tableNumber <= maxTable) {
+      return tableNumber;
+    }
+  }
+  return 1; // Si rien n'est stocké ou si la valeur est invalide, on commence à la table 1
 }
 
 /**
@@ -45,10 +75,8 @@ function nextButtonClick() {
  */
 function reserveSuccess(data, text, jqXHR) {
   if (data.result === true) {
-    // Réservation réussie
-    window.location.href = `index.html?tableNumber=1`;
+    window.location.href = `index.html`;
   } else {
-    // Erreur lors de la réservation : affiche un message d'erreur
     $("#errorMessage").text("Erreur lors de la réservation de la table").show();
   }
 }
@@ -60,7 +88,6 @@ function reserveSuccess(data, text, jqXHR) {
  * @param {string} error - Le message d'erreur retourné.
  */
 function callbackError(request, status, error) {
-  // Affiche une alerte avec les détails de l'erreur
   alert("Erreur : " + error + ", request: " + request + ", status: " + status);
 }
 
@@ -72,12 +99,10 @@ function callbackError(request, status, error) {
  */
 function disconnectSuccess(data, text, jqXHR) {
   if (data.result === true) {
-    // Déconnexion réussie : nettoie la session
     sessionStorage.removeItem("loggued");
     loggued = false;
     window.location.href = 'login.html'; // Redirige vers la page de connexion
   } else {
-    // Erreur lors de la déconnexion : affiche un message d'erreur 
     $("#errorMessage")
       .text("Erreur lors de la déconnexion")
       .show();
@@ -92,26 +117,20 @@ function disconnectSuccess(data, text, jqXHR) {
  */
 function checkSessionSuccess(data, text, jqXHR) {
   if (data.result === true) {
-    // Session valide : l'utilisateur est connecté
     loggued = true;
     sessionStorage.setItem("loggued", true);
   } else {
-    // Session invalide : l'utilisateur est déconnecté
     loggued = false;
     sessionStorage.removeItem("loggued");
   }
-  // Appel du callback de succès avec la réponse
   successCallback(data);
 }
 
 /**
  * Méthode "start" appelée après le chargement complet de la page.
+ * Initialisation des boutons et des événements.
  */
 $(document).ready(function () {
-  const params = new URLSearchParams(window.location.search);
-  const tableNumber = params.get("tableNumber");
-
-  // Sélectionne les éléments DOM pour les boutons
   var prevButton = $("#prevButton");
   var nextButton = $("#nextButton");
   var reserveButton = $("#reserveButton");
@@ -131,10 +150,8 @@ $(document).ready(function () {
     event.preventDefault();
 
     if (getLoggued() === true) {
-      // Appelle disconnect avec le callback disconnectSuccess
       disconnect(disconnectSuccess, callbackError);
     } else {
-      // Si l'utilisateur n'est pas connecté, redirige vers la page de login
       console.error("Erreur lors de la déconnexion : utilisateur non connecté");
       window.location.href = 'login.html';
     }
@@ -143,10 +160,9 @@ $(document).ready(function () {
   reserveButton.click(function (event) {
     event.preventDefault();
 
-    reserverTable(tableNumber, reserveSuccess, callbackError);
+    reserverTable(currentTable, reserveSuccess, callbackError);
   });
 
-  // Initialisation du titre en fonction du numéro de la table actuel
   updateTableNumber();
 
   // Attache les événements aux boutons
