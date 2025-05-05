@@ -75,7 +75,7 @@ $(document).ready(function () {
   var prevButton = $("#prevButton");
   var nextButton = $("#prevButton");
   var reserveButton = $("#reserveButton");
-  var connecxtButton = $("#connectOrDisconnect")
+  var connectButton = $("#connectOrDisconnect")
 
   var loggued = getLoggued();
 

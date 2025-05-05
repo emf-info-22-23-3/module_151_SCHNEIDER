@@ -6,7 +6,7 @@
  */
 
 var BASE_URL = "http://localhost:8080/projet/server/server.php";
-var loggued;
+var loggued = false; // Initialisation à false
 
 /**
  * Fonction permettant de vérifier si l'utilisateur est connecté.
@@ -21,8 +21,21 @@ function checkSession(successCallback, errorCallback) {
     url: BASE_URL,
     dataType: "json",
     data: JSON.stringify(body),
-    success: successCallback,
-    error: errorCallback,
+    success: function(response) {
+      if (response.status === "connected") {
+        loggued = true;
+        sessionStorage.setItem("loggued", true);
+      } else {
+        loggued = false;
+        sessionStorage.removeItem("loggued");
+      }
+      successCallback(response);
+    },
+    error: function(error) {
+      loggued = false;
+      sessionStorage.removeItem("loggued");
+      errorCallback(error);
+    },
   });
 }
 
@@ -41,13 +54,13 @@ function connect(username, password, successCallback, errorCallback) {
     url: BASE_URL,
     dataType: "json",
     data: JSON.stringify(body),
-    success: successCallback,
-    /**
-     * function (response) {
+    success: function(response) {
+      if (response.status === "success") {
         sessionStorage.setItem("loggued", true);
         loggued = true;
-    }
-     */
+      }
+      successCallback(response);
+    },
     error: errorCallback,
   });
 }
@@ -64,14 +77,13 @@ function disconnect(successCallback, errorCallback) {
     url: BASE_URL,
     dataType: "json",
     data: JSON.stringify({ action: "disconnect" }),
-    success: successCallback,
-/**
- * function (response) {
-      if(response.status === "success") {
-        sessionStorage.removeItem("loggued")
+    success: function(response) {
+      if (response.status === "success") {
+        sessionStorage.removeItem("loggued");
+        loggued = false;
       }
+      successCallback(response);
     },
- */
     error: errorCallback,
   });
 }
@@ -96,11 +108,9 @@ function reserverTable(tableNumber, successCallback, errorCallback) {
 }
 
 /**
- * Fonction pour 
- * @param {} loggued 
- * @returns 
+ * Fonction pour obtenir l'état de connexion.
+ * @returns {boolean} - True si l'utilisateur est connecté, false sinon.
  */
-
-function getLoggued(loggued) {
+function getLoggued() {
   return loggued;
 }
