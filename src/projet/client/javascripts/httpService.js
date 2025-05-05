@@ -6,7 +6,12 @@
  */
 
 var BASE_URL = "http://localhost:8080/projet/server/server.php";
-var loggued = false; // Initialisation à false
+var loggued = false;
+
+// Restauration automatique de l'état de connexion depuis sessionStorage
+if (sessionStorage.getItem("loggued") === "true") {
+  loggued = true;
+}
 
 /**
  * Fonction permettant de vérifier si l'utilisateur est connecté.
@@ -14,7 +19,6 @@ var loggued = false; // Initialisation à false
  * @param {function} errorCallback - Fonction de callback en cas d'erreur.
  */
 function checkSession(successCallback, errorCallback) {
-  // Envoi de la requête AJAX pour vérifier la session
   let body = { "action": "check_session" };
   $.ajax({
     type: "POST",
@@ -22,7 +26,7 @@ function checkSession(successCallback, errorCallback) {
     dataType: "json",
     data: JSON.stringify(body),
     success: function(response) {
-      if (response.status === "connected") {
+      if (response.result === true) {
         loggued = true;
         sessionStorage.setItem("loggued", true);
       } else {
@@ -47,7 +51,6 @@ function checkSession(successCallback, errorCallback) {
  * @param {function} errorCallback - Fonction de callback en cas d'erreur.
  */
 function connect(username, password, successCallback, errorCallback) {
-  // Envoi de la requête AJAX pour tenter une connexion
   let body = { "action": "connect", "username": username, "password": password };
   $.ajax({
     type: "POST",
@@ -55,7 +58,7 @@ function connect(username, password, successCallback, errorCallback) {
     dataType: "json",
     data: JSON.stringify(body),
     success: function(response) {
-      if (response.status === "success") {
+      if (response.result === true) {
         sessionStorage.setItem("loggued", true);
         loggued = true;
       }
@@ -71,14 +74,13 @@ function connect(username, password, successCallback, errorCallback) {
  * @param {function} errorCallback - Fonction de callback en cas d'erreur.
  */
 function disconnect(successCallback, errorCallback) {
-  // Envoi de la requête AJAX pour déconnecter l'utilisateur
   $.ajax({
     type: "POST",
     url: BASE_URL,
     dataType: "json",
     data: JSON.stringify({ action: "disconnect" }),
     success: function(response) {
-      if (response.status === "success") {
+      if (response.result === true) {
         sessionStorage.removeItem("loggued");
         loggued = false;
       }
@@ -95,7 +97,6 @@ function disconnect(successCallback, errorCallback) {
  * @param {function} errorCallback - Fonction de callback en cas d'erreur.
  */
 function reserverTable(tableNumber, successCallback, errorCallback) {
-  // Envoi de la requête AJAX pour réserver une table spécifique
   let body = { "action": "reserve", "tableNumber": tableNumber };
   $.ajax({
     type: "POST",

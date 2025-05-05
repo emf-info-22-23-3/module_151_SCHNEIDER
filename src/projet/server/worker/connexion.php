@@ -12,7 +12,7 @@ class Connexion
      * Méthode qui crée l'unique instance de la classe
      * si elle n'existe pas encore puis la retourne.
      *
-     * @return Singleton de la connexion
+     * @return singleton de la connexion
      */
     public static function getInstance()
     {
