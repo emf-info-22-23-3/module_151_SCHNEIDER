@@ -23,9 +23,9 @@ function updateTableNumber() {
  */
 function prevButtonClick() {
   if (currentTable > 1) {
-    currentTable--; // Décrémentation du numéro de la table
-    setCurrentTable(currentTable); // Mise à jour dans sessionStorage
-    updateTableNumber(); // Mise à jour du titre
+    currentTable--;
+    setCurrentTable(currentTable);
+    updateTableNumber();
   }
 }
 
@@ -35,16 +35,15 @@ function prevButtonClick() {
  */
 function nextButtonClick() {
   if (currentTable < maxTable) {
-    currentTable++; // Incrémentation du numéro de la table
-    setCurrentTable(currentTable); // Mise à jour dans sessionStorage
-    updateTableNumber(); // Mise à jour du titre
+    currentTable++;
+    setCurrentTable(currentTable);
+    updateTableNumber();
   }
 }
 
 /**
  * Enregistre le numéro de la table dans sessionStorage.
- * Cette méthode est appelée chaque fois que currentTable est mis à jour.
- *
+ * 
  * @param {number} tableNumber - Le numéro de la table à enregistrer.
  */
 function setCurrentTable(tableNumber) {
@@ -53,9 +52,8 @@ function setCurrentTable(tableNumber) {
 
 /**
  * Récupère le numéro de la table depuis sessionStorage.
- * Si aucune valeur n'est stockée ou si la valeur est invalide, retourne la table 1.
- *
- * @returns {number} Le numéro de la table actuelle.
+ * 
+ * @returns {number} Le numéro de la table actuelle (1 si non défini ou invalide).
  */
 function getCurrentTable() {
   const storedTable = sessionStorage.getItem("currentTable");
@@ -65,56 +63,62 @@ function getCurrentTable() {
       return tableNumber;
     }
   }
-  return 1; // Si rien n'est stocké ou si la valeur est invalide, on commence à la table 1
+  return 1;
 }
 
 /**
- * Méthode appelée lors du retour avec succès du résultat de la réservation.
- * @param {Object} data - Les données retournées par le serveur.
- * @param {string} text - Le texte de réponse du serveur.
- * @param {Object} jqXHR - L'objet XMLHttpRequest pour le détail de la requête.
+ * Appelée lorsque la réservation est réussie ou échoue.
+ * 
+ * @param {Object} data - Réponse du serveur.
+ * @param {string} text - Statut de la réponse.
+ * @param {Object} jqXHR - Objet de la requête.
  */
 function reserveSuccess(data, text, jqXHR) {
   if (data.result === true) {
-    window.location.href = `index.html`;
+    loadReservation(currentTable);
   } else {
-    $("#errorMessage").text("Erreur lors de la réservation de la table").show();
+    if (data.error === "Table complète") {
+      alert("La table est pleine. Veuillez en choisir une autre.");
+    } else {
+      $("#errorMessage").text("Erreur lors de la réservation de la table").show();
+    }
   }
 }
 
 /**
- * Méthode appelée en cas d'erreur lors de la lecture du webservice.
- * @param {Object} request - L'objet de la requête.
- * @param {string} status - Le statut de la réponse.
- * @param {string} error - Le message d'erreur retourné.
+ * Appelée en cas d’échec de la requête.
+ * 
+ * @param {Object} request - Requête envoyée.
+ * @param {string} status - Statut de la requête.
+ * @param {string} error - Message d'erreur.
  */
 function callbackError(request, status, error) {
   alert("Erreur : " + error + ", request: " + request + ", status: " + status);
 }
 
 /**
- * Gère le succès de la déconnexion et redirige l'utilisateur vers la page de login.
- * @param {Object} data - Les données retournées par le serveur.
- * @param {string} text - Le texte de réponse du serveur.
- * @param {Object} jqXHR - L'objet XMLHttpRequest pour le détail de la requête.
+ * Gère le succès de la déconnexion.
+ * 
+ * @param {Object} data - Réponse du serveur.
+ * @param {string} text - Statut de la réponse.
+ * @param {Object} jqXHR - Objet de la requête.
  */
 function disconnectSuccess(data, text, jqXHR) {
   if (data.result === true) {
     sessionStorage.removeItem("loggued");
     loggued = false;
-    window.location.href = 'login.html'; // Redirige vers la page de connexion
+    window.location.href = 'login.html';
   } else {
-    $("#errorMessage")
-      .text("Erreur lors de la déconnexion")
-      .show();
+    $("#errorMessage").text("Erreur lors de la déconnexion").show();
   }
 }
 
 /**
- * Gère le succès de la vérification de session.
- * @param {Object} data - Les données retournées par le serveur.
- * @param {string} text - Le texte de réponse du serveur.
- * @param {Object} jqXHR - L'objet XMLHttpRequest pour le détail de la requête.
+ * Gère la réponse à la vérification de session.
+ * 
+ * @param {Object} data - Réponse du serveur.
+ * @param {string} text - Statut de la réponse.
+ * @param {Object} jqXHR - Objet de la requête.
  */
 function checkSessionSuccess(data, text, jqXHR) {
   if (data.result === true) {
@@ -127,6 +131,11 @@ function checkSessionSuccess(data, text, jqXHR) {
   successCallback(data);
 }
 
+/**
+ * Met à jour les champs de saisie des noms de joueurs avec ceux récupérés.
+ * 
+ * @param {string[]} players - Tableau contenant les noms d’utilisateurs.
+ */
 function updatePlayerFields(players) {
   $("#player1").val(players[0] || "");
   $("#player2").val(players[1] || "");
@@ -134,6 +143,11 @@ function updatePlayerFields(players) {
   $("#player4").val(players[3] || "");
 }
 
+/**
+ * Charge les réservations pour une table donnée.
+ * 
+ * @param {number} tableNumber - Numéro de la table à charger.
+ */
 function loadReservation(tableNumber) {
   getReservation(tableNumber, function (response) {
     if (response.result === true && Array.isArray(response.players)) {
@@ -144,47 +158,39 @@ function loadReservation(tableNumber) {
   }, callbackError);
 }
 
-
 /**
- * Méthode "start" appelée après le chargement complet de la page.
- * Initialisation des boutons et des événements.
+ * Initialise les événements une fois la page entièrement chargée.
  */
 $(document).ready(function () {
   var prevButton = $("#prevButton");
   var nextButton = $("#nextButton");
   var reserveButton = $("#reserveButton");
   var connectButton = $("#connectOrDisconnect");
-
   var loggued = getLoggued();
 
-  // Mise à jour du texte du bouton en fonction de l'état de connexion
   if (loggued === true) {
-    connectButton.text("Se déconnecter");
+    connectButton.text("Se deconnecter");
   } else {
     connectButton.text("Se connecter");
   }
 
-  // L'événement de déconnexion
   connectButton.on("click", function (event) {
     event.preventDefault();
-
     if (getLoggued() === true) {
       disconnect(disconnectSuccess, callbackError);
     } else {
-      console.error("Erreur lors de la déconnexion : utilisateur non connecté");
+      console.error("Erreur lors de la deconnexion : utilisateur non connecté");
       window.location.href = 'login.html';
     }
   });
 
   reserveButton.click(function (event) {
     event.preventDefault();
-
     reserverTable(currentTable, reserveSuccess, callbackError);
   });
 
   updateTableNumber();
 
-  // Attache les événements aux boutons
   prevButton.on("click", function (event) {
     event.preventDefault();
     prevButtonClick();

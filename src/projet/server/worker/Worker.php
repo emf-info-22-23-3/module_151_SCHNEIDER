@@ -1,7 +1,21 @@
 <?php
+
+/*
+ * Fonctions de gestion des utilisateurs et des réservations côté serveur
+ *
+ * @author Schneider Baptiste
+ * @version 2.0 / 06-MAI-2025
+ */
+
 include_once 'Connexion.php';
 
-// Fonction pour se connecter
+/**
+ * Authentifie un utilisateur en vérifiant son nom d’utilisateur et son mot de passe.
+ *
+ * @param string $username Nom d’utilisateur
+ * @param string $password Mot de passe saisi
+ * @return array Résultat de la tentative de connexion (succès ou message d’erreur)
+ */
 function connectUser($username, $password) {
     $db = Connexion::getInstance();
     $query = "SELECT NomUtilisateur, password FROM T_Client WHERE NomUtilisateur = :username";
@@ -9,28 +23,31 @@ function connectUser($username, $password) {
     $user = $db->selectSingleQuery($query, $params);
 
     if ($user) {
-        // Vérification du mot de passe
         if (password_verify($password, $user['password'])) {
-            return ["result" => true, "message" => "Connecté"];
+            return ["result" => true, "message" => "Connecte"];
         } else {
             return ["result" => false, "error" => "Mot de passe incorrect"];
         }
     } else {
-        return ["result" => false, "error" => "Utilisateur non trouvé"];
+        return ["result" => false, "error" => "Utilisateur non trouve"];
     }
 }
 
-// Fonction pour réserver une table
+/**
+ * Permet à un utilisateur de réserver une table si celle-ci n’est pas complète (4 personnes max).
+ *
+ * @param string $currentTable Identifiant de la table
+ * @param string $username Nom d’utilisateur de l’utilisateur qui réserve
+ * @return array Résultat de la réservation (succès ou message d’erreur)
+ */
 function reserveTable($currentTable, $username) {
     $db = Connexion::getInstance();
 
-    //Vérifier si la table est pleine
     $query = "SELECT COUNT(*) as total FROM TR_Client_Table WHERE FK_Table = :currentTable";
     $params = [":currentTable" => $currentTable];
     $result = $db->selectSingleQuery($query, $params);
 
     if ($result && $result['total'] < 4) {
-        //Récupérer l'ID du client à partir du nom d'utilisateur
         $clientQuery = "SELECT PK_Client FROM T_Client WHERE NomUtilisateur = :username";
         $clientParams = [":username" => $username];
         $client = $db->selectSingleQuery($clientQuery, $clientParams);
@@ -41,27 +58,31 @@ function reserveTable($currentTable, $username) {
 
         $clientId = $client['PK_Client'];
 
-        //Faire l'INSERT avec l'ID client
         $insertQuery = "INSERT INTO TR_Client_Table (FK_Client, FK_Table) 
                         VALUES (:clientId, (SELECT PK_Table FROM T_Table WHERE Numero = :currentTable))";
         $insertParams = [":clientId" => $clientId, ":currentTable" => $currentTable];
 
         if ($db->executeQuery($insertQuery, $insertParams)) {
-            return ["result" => true, "message" => "Table réservée"];
+            return ["result" => true, "message" => "Table reservee"];
         } else {
-            return ["result" => false, "error" => "Erreur lors de la réservation"];
+            return ["result" => false, "error" => "Erreur lors de la reservation"];
         }
-
     } else {
-        return ["result" => false, "error" => "Table complète"];
+        return ["result" => true, "error" => "Table complète"];
     }
 }
 
+/**
+ * Récupère la liste des utilisateurs ayant réservé une table donnée.
+ *
+ * @param string $currentTable Identifiant de la table
+ * @return array Liste des noms d’utilisateurs ayant réservé cette table
+ */
 function getReservation($currentTable) {
     $db = Connexion::getInstance();
-    $query = "SELECT NomUtilisateur FROM t_client 
-	          INNER JOIN tr_client_table ON fk_client = pk_client 
-              INNER JOIN t_table ON fk_table = pk_table
+    $query = "SELECT NomUtilisateur FROM T_Client 
+	          INNER JOIN TR_Client_Table ON fk_client = pk_client 
+              INNER JOIN T_Table ON fk_table = pk_table
               WHERE NUMERO = :table;";
     $params = [":table" => $currentTable];
     $rows = $db->selectQuery($query, $params);
@@ -83,8 +104,11 @@ function getReservation($currentTable) {
     }
 }
 
-
-// Fonction pour vérifier la session de l'utilisateur
+/**
+ * Vérifie si une session utilisateur est active.
+ *
+ * @return array Résultat indiquant si l’utilisateur est connecté ou non
+ */
 function checkSession() {
     if (isset($_SESSION['loggued']) && $_SESSION['status'] == 'loggued') {
         return ["result" => true];
@@ -93,10 +117,13 @@ function checkSession() {
     }
 }
 
-// Fonction pour se déconnecter
+/**
+ * Supprime la session utilisateur pour effectuer une déconnexion.
+ *
+ * @return array Résultat de l’opération de déconnexion
+ */
 function disconnectUser() {
     session_unset();
     return ["result" => true];
 }
-
 ?>
