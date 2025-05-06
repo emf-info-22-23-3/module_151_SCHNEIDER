@@ -65,6 +65,7 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
                 }
             }
 
+            // Action pour récupérer les utilisateur
             if ($receivedParams["action"] == "get_reservation") {
                 if (isset($receivedParams['currentTable'])) {
                     $currentTable = $receivedParams['currentTable'];
